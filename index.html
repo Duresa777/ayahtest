@@ -284,8 +284,9 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
                 <div class="bottom-dock">
                     <div class="dock-left">
                         <div class="file-upload-wrapper" style="margin: 0; width: 100%;">
-                            <label class="action-btn" style="cursor: pointer; margin: 0; width: 100%;">
-                                <i class="ph ph-upload-simple"></i> <span data-translate="uploadText">Tap to upload a video or audio file</span>
+                            <!-- FIXED LABEL: Added for="videoUpload" so it perfectly triggers the input when clicked -->
+                            <label for="videoUpload" class="action-btn" style="cursor: pointer; margin: 0; width: 100%; box-sizing: border-box;">
+                                <i class="ph ph-upload-simple" style="margin-right: 8px;"></i> <span data-translate="uploadText">Upload file</span>
                             </label>
                             <input type="file" id="videoUpload" accept="video/mp4,video/*,audio/mp3,audio/*">
                         </div>
@@ -364,7 +365,25 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
         </div>
     </div>
 
-    <!-- Auth Prompt, Support, Shortcuts, Edit Modals -->
+    <!-- Auth Prompt Modal -->
+    <div id="authPromptModal" class="modal-overlay">
+        <div class="modal-content auth-prompt-content">
+            <button class="close-modal" id="closeAuthPromptBtn"><i class="ph ph-x"></i></button>
+            <i class="ph-fill ph-cloud-arrow-up cloud-icon"></i>
+            <h3 style="margin-bottom: 10px; font-size: 1.3rem;">Don't lose your cuts!</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.4;">
+                Sign in securely to automatically sync your Surah cuts to the cloud and access them on any device.
+            </p>
+            <button id="promptSignInBtn" style="background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(74, 55, 39, 0.2);">
+                <i class="ph ph-google-logo"></i> Sign in with Google
+            </button>
+            <button id="promptSkipBtn" style="background: transparent; color: var(--text-muted); border: none; margin-top: 12px; font-size: 0.85rem; cursor: pointer; text-decoration: underline;">
+                Maybe later
+            </button>
+        </div>
+    </div>
+
+    <!-- Support Modal Popup -->
     <div id="supportModal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-modal" id="closeModalBtn"><i class="ph ph-x"></i></button>
@@ -386,6 +405,7 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
         </div>
     </div>
 
+    <!-- Shortcuts Modal Popup -->
     <div id="shortcutsModal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-modal" id="closeShortcutsBtn"><i class="ph ph-x"></i></button>
@@ -405,6 +425,7 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
         </div>
     </div>
 
+    <!-- Edit Cut Modal -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 360px;">
             <button class="close-modal" id="closeEditModalBtn"><i class="ph ph-x"></i></button>
@@ -454,8 +475,24 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
         </div>
     </div>
 
-    <!-- Theme Switcher Logic -->
+    <!-- SEO Footer for Google Rankings -->
+    <footer id="seoWidget" style="position: fixed; bottom: 20px; right: 20px; max-width: 320px; text-align: right; background: var(--surface); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 8px 24px rgba(0,0,0,0.08); z-index: 100;">
+        <button id="closeSeoBtn" style="position: absolute; top: 12px; left: 15px; background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; padding: 0; line-height: 1;">&times;</button>
+        <h3 style="font-size: 1rem; color: var(--primary); margin: 0 0 0.5rem 0; font-weight: 600;">About Ayah Looper</h3>
+        <p style="color: var(--text-muted); font-size: 0.8rem; line-height: 1.5; margin: 0 0 0.8rem 0;">A free tool to cut, loop, and repeat specific Ayahs to assist with Hifz (memorization). Stream high-quality Qari audio instantly.</p>
+        
+        <!-- Creator Credit Section -->
+        <div style="padding-top: 0.8rem; border-top: 1px solid var(--border-color); text-align: right;">
+            <p style="color: var(--text-main); font-size: 0.75rem; font-weight: 600; margin: 0;">Created by Duresa Haji</p>
+            <a href="https://instagram.com/ayahloopcom" target="_blank" style="color: var(--primary); text-decoration: none; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 4px; transition: opacity 0.2s;">
+                <i class="ph ph-instagram-logo" style="font-size: 1rem;"></i> @ayahloopcom
+            </a>
+        </div>
+    </footer>
+
+    <!-- JS Logic specific to index.html -->
     <script>
+        // 1. Theme Switcher Logic
         const themeSwatches = document.querySelectorAll('.theme-swatch');
         function applyTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
@@ -475,7 +512,100 @@ li button { background: var(--danger) !important; border-radius: 8px !important;
         });
         // Apply instantly on load
         applyTheme(localStorage.getItem('ayah_theme') || 'coffee');
+
+        // 2. SEO Widget Dismiss Logic
+        const seoWidget = document.getElementById('seoWidget');
+        const closeSeoBtn = document.getElementById('closeSeoBtn');
+        if(seoWidget && closeSeoBtn) {
+            if (localStorage.getItem('seoDismissed') === 'true') {
+                seoWidget.style.display = 'none';
+            }
+            closeSeoBtn.addEventListener('click', () => {
+                seoWidget.style.display = 'none';
+                localStorage.setItem('seoDismissed', 'true');
+            });
+        }
+
+        // 3. Library API Connection Logic (Handles audio passed from library.html)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const passedAudio = urlParams.get('audio');
+            const passedTitle = urlParams.get('title');
+            const passedReciter = urlParams.get('reciter');
+
+            if (passedAudio) {
+                const player = document.getElementById('quranVideo');
+                const statusBox = document.getElementById('statusText');
+                const audioDisplay = document.getElementById('audioDisplay');
+                const customPlayer = document.getElementById('customAudioPlayer');
+                
+                document.querySelector('.file-upload-wrapper').style.display = 'none';
+                document.getElementById('backToLibraryBtn').style.display = 'flex';
+                
+                // Show the beautiful display
+                audioDisplay.style.display = 'block';
+                document.getElementById('displayTitle').innerText = passedTitle;
+                if (passedReciter) {
+                    document.getElementById('displayReciter').innerText = `by Al-Qari ${passedReciter}`;
+                }
+
+                // Hide the ugly native video player entirely
+                player.style.display = 'none';
+                player.removeAttribute('controls');
+                
+                // Show the sleek custom player
+                customPlayer.style.display = 'block';
+
+                // Connect the custom UI to the hidden audio player
+                const customPlayBtn = document.getElementById('customPlayBtn');
+                const customPlayIcon = document.getElementById('customPlayIcon');
+                const customSeekBar = document.getElementById('customSeekBar');
+                const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+                const durationDisplay = document.getElementById('durationDisplay');
+
+                const formatTime = (seconds) => {
+                    if (isNaN(seconds)) return "0:00";
+                    const m = Math.floor(seconds / 60);
+                    const s = Math.floor(seconds % 60);
+                    return m + ":" + (s < 10 ? "0" : "") + s;
+                };
+
+                customPlayBtn.addEventListener('click', () => {
+                    if (player.paused) player.play();
+                    else player.pause();
+                });
+
+                player.addEventListener('play', () => customPlayIcon.classList.replace('ph-play', 'ph-pause'));
+                player.addEventListener('pause', () => customPlayIcon.classList.replace('ph-pause', 'ph-play'));
+
+                player.addEventListener('loadedmetadata', () => {
+                    customSeekBar.max = player.duration;
+                    durationDisplay.innerText = formatTime(player.duration);
+                });
+
+                player.addEventListener('timeupdate', () => {
+                    customSeekBar.value = player.currentTime;
+                    currentTimeDisplay.innerText = formatTime(player.currentTime);
+                });
+
+                customSeekBar.addEventListener('input', () => {
+                    player.currentTime = customSeekBar.value;
+                });
+
+                player.addEventListener('error', () => {
+                    statusBox.innerHTML = `❌ <strong>Error loading ${passedTitle}.</strong><br>The server is busy or the file is missing. Try a different reciter.`;
+                });
+
+                player.src = passedAudio;
+                statusBox.innerHTML = `✅ <strong>${passedTitle}</strong> is ready!<br>Tap the Play button on the bar above to begin.`;
+                const emptyState = document.getElementById('emptyPlayerState');
+                if (emptyState) emptyState.classList.add('hidden');
+                if (window.checkAndShowAuthPrompt) window.checkAndShowAuthPrompt();
+            }
+        });
     </script>
-    <script type="module" src="app.js?v=12"></script>
+
+    <!-- Connect the main Javascript engine -->
+    <script type="module" src="app.js?v=13"></script>
 </body>
 </html>
