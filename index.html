@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayah Looper</title>
+    <meta name="author" content="Duresa Haji">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+/* =========================================
+   THEME ENGINE (11 THEMES)
+   ========================================= */
+:root, [data-theme="coffee"] { --bg-color: #1a1614; --surface: #26211e; --primary: #d4af37; --text-main: #f5f0eb; --text-muted: #a69b91; --border-color: rgba(212, 175, 55, 0.2); --danger: #ef4444;}
+[data-theme="midnight"] { --bg-color: #0f172a; --surface: #1e293b; --primary: #38bdf8; --text-main: #f1f5f9; --text-muted: #94a3b8; --border-color: rgba(56, 189, 248, 0.2); }
+[data-theme="forest"] { --bg-color: #0d1a16; --surface: #132721; --primary: #4ade80; --text-main: #ecfdf5; --text-muted: #6ee7b7; --border-color: rgba(74, 222, 128, 0.2); }
+[data-theme="amethyst"] { --bg-color: #2e1065; --surface: #4c1d95; --primary: #c084fc; --text-main: #f3e8ff; --text-muted: #d8b4fe; --border-color: rgba(192, 132, 252, 0.2); }
+[data-theme="rose"] { --bg-color: #27272a; --surface: #3f3f46; --primary: #fb7185; --text-main: #ffe4e6; --text-muted: #fda4af; --border-color: rgba(251, 113, 133, 0.2); }
+[data-theme="monochrome"] { --bg-color: #000000; --surface: #111111; --primary: #ffffff; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
+[data-theme="ocean"] { --bg-color: #083344; --surface: #164e63; --primary: #22d3ee; --text-main: #cffafe; --text-muted: #67e8f9; --border-color: rgba(34, 211, 238, 0.2); }
+[data-theme="sunset"] { --bg-color: #450a0a; --surface: #7f1d1d; --primary: #fb923c; --text-main: #ffedd5; --text-muted: #fdba74; --border-color: rgba(251, 146, 60, 0.2); }
+[data-theme="dracula"] { --bg-color: #282a36; --surface: #44475a; --primary: #ff79c6; --text-main: #f8f8f2; --text-muted: #6272a4; --border-color: rgba(255, 121, 198, 0.2); }
+[data-theme="nord"] { --bg-color: #2e3440; --surface: #3b4252; --primary: #88c0d0; --text-main: #eceff4; --text-muted: #d8dee9; --border-color: rgba(136, 192, 208, 0.2); }
+[data-theme="matcha"] { --bg-color: #2d372c; --surface: #3e4a3d; --primary: #a3b18a; --text-main: #dad7cd; --text-muted: #849669; --border-color: rgba(163, 177, 138, 0.2); }
+
+/* Theme Swatches */
+.theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 10px; margin-bottom: 20px; }
+.theme-swatch { width: 100%; aspect-ratio: 1; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.2s, border 0.2s; }
+.theme-swatch:hover { transform: scale(1.1); }
+.theme-swatch.active { border: 2px solid var(--text-main); }
+
+/* =========================================
+   NATIVE DESKTOP OVERRIDES
+   ========================================= */
+:root { --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+body, html { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-color); font-family: var(--font-family); -webkit-user-select: none; user-select: none; cursor: default; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+button, a, .sidebar-btn, .theme-swatch { cursor: default !important; outline: none !important; -webkit-tap-highlight-color: transparent; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 8px; border: 2px solid var(--bg-color); }
+::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.6); }
+
+/* =========================================
+   APP SKELETON
+   ========================================= */
+.app-wrapper { display: flex; height: 100%; background: var(--bg-color); }
+.app-sidebar { width: 72px; background: var(--surface); border-inline-end: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 24px 0; z-index: 50; flex: none; }
+.sidebar-logo { font-size: 2rem; color: var(--primary); margin-bottom: 40px; }
+.sidebar-btn { background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; width: 48px; height: 48px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s ease; margin-bottom: 8px; text-decoration: none; }
+.sidebar-btn:hover { color: var(--primary); background: rgba(212, 175, 55, 0.1); }
+.main-content { flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+
+/* =========================================
+   WORKSPACE & PLAYER
+   ========================================= */
+.video-wrapper { width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 1.5rem; }
+.workspace-row { display: flex; gap: 1.5rem; }
+.video-workspace { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+.video-workspace > * { width: 100%; }
+.cuts-sidebar { width: 300px; flex: none; background: #141414; border-left: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; display: flex; flex-direction: column; max-height: 60vh; overflow-y: auto; border-radius: 12px; }
+.video-container { flex: 1; max-height: 60vh; border-radius: 16px; overflow: hidden; background: #000; position: relative; }
+video { width: 100%; background: #000; border-radius: 16px; margin: 0 0 1rem 0; box-shadow: 0 8px 16px rgba(0,0,0,0.1); max-height: 50vh; }
+
+/* Bottom Control Dock */
+.bottom-dock { background: #141414; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; align-items: center; justify-content: space-between; padding: 1rem 2rem; box-sizing: border-box; }
+.dock-left, .dock-right { width: 30%; display: flex; align-items: center; gap: 15px; }
+.dock-right { justify-content: flex-end; }
+.dock-center { width: 40%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.main-control-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 15px; position: relative; width: 100%; }
+
+/* Buttons & Inputs */
+.action-btn { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 1rem; font-weight: 500; padding: 0 16px; cursor: pointer; text-decoration: none; transition: 0.2s ease; }
+.action-btn:hover { background: rgba(255, 255, 255, 0.05); }
+.icon-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.2s; }
+.modern-input-group { display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; color: #a0a0a0; }
+.modern-input-group input { background: transparent; border: none; color: #fff; width: 30px; text-align: center; outline: none; font-weight: bold; }
+
+input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.status { background: transparent; border: none; padding: 0; font-size: 0.95rem; font-weight: 500; text-align: center; color: var(--text-muted); margin-bottom: 1rem; }
+
+/* The Loop Button */
+#toggleLoopBtn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; width: auto; white-space: nowrap; border-radius: 8px; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; }
+#toggleLoopBtn.stop-state { background: rgba(228, 49, 43, 0.1) !important; color: #ff6b6b !important; border: 1px solid rgba(228, 49, 43, 0.3) !important; }
+
+/* =========================================
+   PREMIUM CUT BUTTON & SNIP ANIMATION
+   ========================================= */
+#markCutBtn {
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    background: var(--primary) !important; color: #111 !important; border: none !important;
+    border-radius: 8px !important; font-size: 1.2rem; transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3) !important; cursor: pointer;
+}
+#markCutBtn:active { transform: scale(0.92); box-shadow: 0 2px 4px rgba(212, 175, 55, 0.2) !important; }
+
+@keyframes snipMotion {
+    0% { transform: rotate(0deg) scale(1); }
+    40% { transform: rotate(-30deg) scale(0.8); }
+    70% { transform: rotate(20deg) scale(1.2); }
+    100% { transform: rotate(0deg) scale(1); }
+}
+.cut-success-animate {
+    background: #4ade80 !important; box-shadow: 0 0 15px rgba(74, 222, 128, 0.5) !important;
+    transform: scale(0.95); transition: background 0.1s ease;
+}
+.cut-success-animate i { animation: snipMotion 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+/* =========================================
+   LISTS & MODALS
+   ========================================= */
+ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+li { background: var(--surface); border: 1px solid var(--border-color); padding: 12px 16px !important; border-radius: 12px; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+li button { background: var(--danger) !important; border-radius: 8px !important; font-size: 0.85rem !important; padding: 8px 12px !important; min-width: auto; flex: none; color: white; border: none; cursor: pointer; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(39, 28, 20, 0.4); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal-content { background: var(--surface); padding: 24px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; position: relative; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8); transform: translateY(20px); transition: transform 0.3s ease; }
+.modal-overlay.show .modal-content { transform: translateY(0); }
+.close-modal { position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; padding: 0; }
+.settings-list-btn { display: flex; align-items: center; gap: 12px; background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.2s ease; text-align: left; width: 100%; text-decoration: none; }
+.settings-list-btn:hover { border-color: var(--primary); background: rgba(255, 255, 255, 0.05); }
+.settings-list-btn i { font-size: 1.3rem; color: var(--primary); }
+
+.lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Edit Modal Fine Tuning */
+.tune-btn { background: var(--surface); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; box-shadow: 0 2px 5px rgba(74, 55, 39, 0.05); transition: transform 0.1s; }
+.tune-btn:active { transform: scale(0.9); }
+
+/* Support Modal */
+.support-options { display: flex; flex-direction: column; gap: 1rem; }
+.support-link { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; border-radius: 12px; font-weight: 600; text-decoration: none; transition: transform 0.2s ease; color: white; }
+.support-link:active { transform: scale(0.96); }
+.ig-link { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+.divider { display: flex; align-items: center; text-align: center; margin: 0.5rem 0; }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+.divider span { padding: 0 10px; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+
+/* Empty Player Coffee Steam */
+.empty-player-prompt { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); border-radius: inherit; z-index: 5; transition: opacity 0.3s ease; }
+.empty-player-prompt.hidden { opacity: 0; pointer-events: none; }
+.coffee-cup-container { position: relative; display: inline-block; margin-bottom: 25px; }
+.coffee-icon { font-size: 3.5rem; color: var(--primary); position: relative; z-index: 2; }
+.steam-box { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 40px; height: 60px; pointer-events: none; z-index: 1; }
+.steam { position: absolute; bottom: 0; background: var(--text-muted); border-radius: 50%; filter: blur(8px); opacity: 0; width: 12px; height: 12px; }
+.steam-1 { animation: riseSteam 4s infinite ease-in; left: 5px; }
+.steam-2 { animation: riseSteam 5s infinite ease-in 1.5s; left: 20px; }
+.steam-3 { animation: riseSteam 4.5s infinite ease-in 0.8s; left: 12px; }
+@keyframes riseSteam { 0% { transform: translateY(0) scale(1); opacity: 0; } 20% { opacity: 0.3; } 50% { transform: translateY(-30px) scale(1.5) translateX(-8px); opacity: 0.4; } 100% { transform: translateY(-60px) scale(2.5) translateX(12px); opacity: 0; } }
+
+/* =========================================
+   MOBILE NATIVE APP LAYOUT
+   ========================================= */
+@media (max-width: 768px) {
+    html, body { height: auto !important; min-height: 100vh; overflow-y: auto !important; overflow-x: hidden !important; }
+    .app-wrapper { flex-direction: column; height: auto; min-height: 100vh; }
+
+    /* Top Nav */
+    .app-sidebar { width: 100%; padding: 10px 15px; flex-direction: row; justify-content: space-between; border-inline-end: none; border-bottom: 1px solid var(--border-color); box-sizing: border-box; z-index: 100; background: var(--surface); position: sticky; top: 0; }
+    .app-sidebar > div { flex-direction: row !important; gap: 10px; }
+    .sidebar-logo { display: none; }
+    .sidebar-btn { margin-bottom: 0; width: 44px; height: 44px; font-size: 1.4rem; }
+
+    /* Main Content Reordering */
+    .main-content { padding: 15px; overflow: visible; }
+    .video-wrapper { display: flex; flex-direction: column; gap: 15px; width: 100%; }
+    .workspace-row { display: contents; } 
+    
+    .video-workspace { order: 1; }
+    .video-container { max-height: 35vh; border-radius: 12px; }
+
+    /* Controls directly under video */
+    .bottom-dock { order: 2; background: transparent; border: none; padding: 0; flex-direction: column; gap: 15px; }
+    .dock-center { order: 1; width: 100%; background: var(--surface); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); box-sizing: border-box; }
+    .main-control-row { flex-wrap: wrap; gap: 12px; margin-top: 0; }
+    .icon-btn { width: 50px; height: 50px; font-size: 1.5rem; }
+    #markCutBtn { width: 64px; height: 64px; font-size: 1.8rem; border-radius: 16px !important; }
+    #toggleLoopBtn { width: 100%; height: 50px; margin-top: 5px; font-size: 1rem; }
+    .status { font-size: 0.85rem; padding: 10px; margin: 0; line-height: 1.4; border: none; background: transparent; }
+
+    /* Cuts List */
+    .cuts-sidebar { order: 3; width: 100%; border-left: none; background: var(--surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; box-sizing: border-box; max-height: 40vh; }
+
+    /* Bottom Settings */
+    .dock-left { order: 4; width: 100%; }
+    .dock-right { order: 5; width: 100%; justify-content: space-between; background: var(--surface); padding: 15px; border-radius: 16px; border: 1px solid var(--border-color); box-sizing: border-box; }
+}
+    </style>
+</head>
+<body>
+    <div class="titlebar-drag-region"></div>
+
+    <div class="app-wrapper">
+        <!-- THE SIDEBAR -->
+        <aside class="app-sidebar">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <i class="ph-fill ph-infinity sidebar-logo"></i>
+                <a id="libraryBtn" href="library.html" class="sidebar-btn" title="Library">
+                    <i class="ph ph-books"></i>
+                </a>
+                <button id="importBtn" class="sidebar-btn" title="Import Cuts">
+                    <i class="ph ph-upload-simple"></i>
+                </button>
+                <input type="file" id="importInput" accept=".json" style="display: none;">
+                <button id="exportBtn" class="sidebar-btn" title="Export Cuts">
+                    <i class="ph ph-download-simple"></i>
+                </button>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <button id="langBtn" class="sidebar-btn" title="Language">
+                    <i class="ph ph-globe"></i>
+                </button>
+                <button id="settingsBtn" class="sidebar-btn" title="Settings">
+                    <i class="ph ph-gear"></i>
+                </button>
+                <button id="authBtn" class="sidebar-btn" title="Sign In">
+                    <i class="ph ph-user-circle"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="video-wrapper">
+
+                <a id="backToLibraryBtn" href="library.html" style="display: none; align-items: center; gap: 8px; color: var(--text-main); font-weight: 600; text-decoration: none; padding: 0.5rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 12px; width: fit-content;">
+                    <i class="ph ph-arrow-left"></i> Back to Library
+                </a>
+
+                <div class="workspace-row">
+                    <div class="video-workspace">
+                        <div id="audioDisplay" style="display: none; background: linear-gradient(135deg, var(--primary), var(--surface)); color: #fff; padding: 3.5rem 1rem; border-radius: 16px; text-align: center; border: 1px solid var(--border-color);">
+                            <h2 id="displayTitle" style="font-size: 2.2rem; margin: 0 0 0.5rem 0; font-weight: 700; color: #fff;">Surah</h2>
+                            <p id="displayReciter" style="font-size: 1.1rem; margin: 0; opacity: 0.9; color: #f2eae1;">by Al-Qari</p>
+                        </div>
+
+                        <!-- Premium Custom Audio Player properly hidden -->
+                        <div id="customAudioPlayer" style="display: none;">
+                            <div style="background: var(--surface); padding: 20px 24px; border-radius: 20px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 20px;">
+                                <button id="customPlayBtn" style="flex: 0 0 auto; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: transform 0.2s;">
+                                    <i class="ph-fill ph-play" id="customPlayIcon" style="font-size: 1.6rem; margin-left: 4px;"></i>
+                                </button>
+                                <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                                        <span id="currentTimeDisplay">0:00</span>
+                                        <span id="durationDisplay">0:00</span>
+                                    </div>
+                                    <input type="range" id="customSeekBar" value="0" min="0" max="100" style="width: 100%; height: 6px; background: var(--border-color); border-radius: 10px; outline: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="video-container">
+                            <div id="emptyPlayerState" class="empty-player-prompt">
+                                <div class="coffee-cup-container">
+                                    <div class="steam-box">
+                                        <div class="steam steam-1"></div>
+                                        <div class="steam steam-2"></div>
+                                        <div class="steam steam-3"></div>
+                                    </div>
+                                    <i class="ph-fill ph-coffee coffee-icon"></i>
+                                </div>
+                                <h4 data-translate="emptyTitle" style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Player is empty</h4>
+                                <p data-translate="emptySub" style="font-size: 0.9rem; margin-top: 6px;">Upload a file or pick a Surah from the library!</p>
+                            </div>
+                            <video id="quranVideo" controls playsinline></video>
+                        </div>
+                    </div>
+
+                    <!-- Cuts List -->
+                    <aside class="cuts-sidebar">
+                        <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Your Cuts</h3>
+                        <div id="cutsContainer" style="flex: 1; overflow-y: auto;">
+                            <ul id="sliceList"></ul>
+                        </div>
+                    </aside>
+                </div>
+
+                <!-- Media Controls -->
+                <div class="bottom-dock">
+                    <div class="dock-left">
+                        <div class="file-upload-wrapper" style="margin: 0; width: 100%;">
+                            <label class="action-btn" style="cursor: pointer; margin: 0; width: 100%;">
+                                <i class="ph ph-upload-simple"></i> <span data-translate="uploadText">Tap to upload a video or audio file</span>
+                            </label>
+                            <input type="file" id="videoUpload" accept="video/mp4,video/*,audio/mp3,audio/*">
+                        </div>
+                    </div>
+
+                    <div class="dock-center">
+                        <div class="main-control-row">
+                            <button id="prevBtn" class="icon-btn" disabled title="Previous"><i class="ph ph-skip-back"></i></button>
+                            
+                            <button id="markCutBtn" title="Cut (Press C)"><i class="ph-fill ph-scissors"></i></button>
+
+                            <button id="toggleLoopBtn" class="action-btn" title="Loop"><i class="ph-bold ph-arrows-clockwise"></i> <span data-translate="startLooping">Start Looping</span></button>
+                            <button id="nextBtn" class="icon-btn" disabled title="Next"><i class="ph ph-skip-forward"></i></button>
+                        </div>
+                        <div class="status" id="statusText"><span data-translate="instructionText">Play the audio, then click 'Cut' or press 'C' to slice Ayahs.</span></div>
+                    </div>
+
+                    <div class="dock-right">
+                        <div class="modern-input-group">
+                            <span data-translate="pauseText">:Pause</span>
+                            <input type="number" id="loopDelay" value="0" min="0" step="0.5">
+                            <span data-translate="secText">sec</span>
+                        </div>
+                        <button id="speedBtn" class="action-btn" style="padding: 6px 12px; font-size: 0.85rem;">1x <span data-translate="speedText">Speed</span></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="langModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 380px;">
+            <button class="close-modal" id="closeLangModalBtn"><i class="ph ph-x"></i></button>
+            <h3 style="margin-bottom: 1.5rem; text-align: left;" data-translate="langTitle">Select Language</h3>
+            <div class="lang-grid">
+                <button class="settings-list-btn lang-select" data-lang="en">English</button>
+                <button class="settings-list-btn lang-select" data-lang="ar">العربية</button>
+                <button class="settings-list-btn lang-select" data-lang="ur">اردو</button>
+                <button class="settings-list-btn lang-select" data-lang="id">Bahasa Indonesia</button>
+                <button class="settings-list-btn lang-select" data-lang="tr">Türkçe</button>
+                <button class="settings-list-btn lang-select" data-lang="fr">Français</button>
+                <button class="settings-list-btn lang-select" data-lang="es">Español</button>
+                <button class="settings-list-btn lang-select" data-lang="ru">Русский</button>
+                <button class="settings-list-btn lang-select" data-lang="bn">বাংলা</button>
+                <button class="settings-list-btn lang-select" data-lang="hi">हिन्दी</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 320px;">
+            <button class="close-modal" id="closeSettingsModalBtn"><i class="ph ph-x"></i></button>
+            <h3 style="margin-bottom: 1.5rem; text-align: left;">Settings</h3>
+            <h4 style="margin-bottom: 8px; color: var(--text-muted);" data-translate="themeTitle">App Theme</h4>
+            <div class="theme-grid">
+                <button class="theme-swatch active" data-set-theme="coffee" style="background: #d4af37;" title="Coffee"></button>
+                <button class="theme-swatch" data-set-theme="midnight" style="background: #38bdf8;" title="Midnight"></button>
+                <button class="theme-swatch" data-set-theme="forest" style="background: #4ade80;" title="Forest"></button>
+                <button class="theme-swatch" data-set-theme="amethyst" style="background: #c084fc;" title="Amethyst"></button>
+                <button class="theme-swatch" data-set-theme="rose" style="background: #fb7185;" title="Rose"></button>
+                <button class="theme-swatch" data-set-theme="monochrome" style="background: #ffffff;" title="Monochrome"></button>
+                <button class="theme-swatch" data-set-theme="ocean" style="background: #22d3ee;" title="Ocean"></button>
+                <button class="theme-swatch" data-set-theme="sunset" style="background: #fb923c;" title="Sunset"></button>
+                <button class="theme-swatch" data-set-theme="dracula" style="background: #ff79c6;" title="Dracula"></button>
+                <button class="theme-swatch" data-set-theme="nord" style="background: #88c0d0;" title="Nord"></button>
+                <button class="theme-swatch" data-set-theme="matcha" style="background: #a3b18a;" title="Matcha"></button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="pipBtn" class="settings-list-btn" style="display: none;"><i class="ph ph-browsers"></i> <span data-translate="pip">Mini Player (PiP)</span></button>
+                <button id="shortcutsBtn" class="settings-list-btn"><i class="ph ph-keyboard"></i> <span data-translate="shortcuts">Keyboard Shortcuts</span></button>
+                <a href="faq.html" id="faqBtn" class="settings-list-btn"><i class="ph ph-question"></i> <span data-translate="faq">Help & FAQ</span></a>
+                <button id="supportBtn" class="settings-list-btn"><i class="ph-fill ph-heart" style="color: #e57373;"></i> <span data-translate="support">Support</span></button>
+                <button id="signOutSettingsBtn" class="settings-list-btn" style="display: none; color: var(--danger); border-top: 1px solid var(--border-color); margin-top: 10px;"><i class="ph ph-sign-out" style="color: var(--danger);"></i> <span data-translate="signOut">Sign Out</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Prompt, Support, Shortcuts, Edit Modals -->
+    <div id="supportModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModalBtn"><i class="ph ph-x"></i></button>
+            <h3>Support the Creator</h3>
+            <p>If Ayah Looper helped you, consider supporting its development!</p>
+            
+            <div class="support-options">
+                <a href="https://ko-fi.com/ayahloop" target="_blank" class="support-link donate-link" style="background: #29abe0; color: white;">
+                    <i class="ph-fill ph-coffee"></i> Support on Ko-fi
+                </a>
+                
+                <div class="divider"><span>OR</span></div>
+                
+                <p class="ig-text">If you can't donate right now, a follow means the world!</p>
+                <a href="https://instagram.com/ayahloopcom" target="_blank" class="support-link ig-link">
+                    <i class="ph ph-instagram-logo"></i> Follow on Instagram
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="shortcutsModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" id="closeShortcutsBtn"><i class="ph ph-x"></i></button>
+            <h3>Keyboard Shortcuts</h3>
+            <p>Work faster without touching your mouse!</p>
+            
+            <div style="text-align: left; background: var(--bg-color); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-main);"><i class="ph-fill ph-play-circle" style="color: var(--primary);"></i> Play / Pause</span>
+                    <kbd style="background: var(--surface); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color); font-family: monospace; font-weight: bold; color: var(--text-main);">Spacebar</kbd>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-main);"><i class="ph ph-scissors" style="color: var(--primary);"></i> Cut Ayah</span>
+                    <kbd style="background: var(--surface); padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border-color); font-family: monospace; font-weight: bold; color: var(--text-main);">C</kbd>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 360px;">
+            <button class="close-modal" id="closeEditModalBtn"><i class="ph ph-x"></i></button>
+            <h3 id="editModalTitle" style="margin-bottom: 1.5rem;">Edit Ayah</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
+                <div>
+                    <p style="margin: 0 0 10px 0; font-weight: 600; color: var(--text-main); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Fine-Tune Timing (+/- 0.5s)</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 16px; border-radius: 16px; border: 1px solid var(--border-color);">
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">START</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button id="editStartMinus" class="tune-btn">-</button>
+                                <span id="editStartVal" style="font-family: monospace; font-weight: 600; width: 40px; text-align: center; color: var(--primary); font-size: 1.1rem;">0.0</span>
+                                <button id="editStartPlus" class="tune-btn">+</button>
+                            </div>
+                        </div>
+                        
+                        <i class="ph-bold ph-arrow-right" style="color: var(--primary); opacity: 0.3; font-size: 1.5rem;"></i>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">END</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <button id="editEndMinus" class="tune-btn">-</button>
+                                <span id="editEndVal" style="font-family: monospace; font-weight: 600; width: 40px; text-align: center; color: var(--primary); font-size: 1.1rem;">0.0</span>
+                                <button id="editEndPlus" class="tune-btn">+</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div>
+                    <p style="margin: 0 0 10px 0; font-weight: 600; color: var(--text-main); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Merge Cuts</p>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="mergeUpBtn" style="flex: 1; background: var(--secondary); border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+                            <i class="ph-bold ph-arrow-up"></i> Previous
+                        </button>
+                        <button id="mergeDownBtn" style="flex: 1; background: var(--secondary); border: none; padding: 12px; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s;">
+                            Next <i class="ph-bold ph-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Switcher Logic -->
+    <script>
+        const themeSwatches = document.querySelectorAll('.theme-swatch');
+        function applyTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('ayah_theme', themeName);
+            themeSwatches.forEach(swatch => {
+                if (swatch.getAttribute('data-set-theme') === themeName) {
+                    swatch.classList.add('active');
+                } else {
+                    swatch.classList.remove('active');
+                }
+            });
+        }
+        themeSwatches.forEach(swatch => {
+            swatch.addEventListener('click', (e) => {
+                applyTheme(e.target.getAttribute('data-set-theme'));
+            });
+        });
+        // Apply instantly on load
+        applyTheme(localStorage.getItem('ayah_theme') || 'coffee');
+    </script>
+    <script type="module" src="app.js?v=12"></script>
+</body>
+</html>

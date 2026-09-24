@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ & Help - Ayah Looper</title>
+    <meta name="author" content="Duresa Haji">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+/* =========================================
+   THEME ENGINE (11 THEMES)
+   ========================================= */
+:root, [data-theme="coffee"] { --bg-color: #1a1614; --surface: #26211e; --primary: #d4af37; --text-main: #f5f0eb; --text-muted: #a69b91; --border-color: rgba(212, 175, 55, 0.2); --danger: #ef4444;}
+[data-theme="midnight"] { --bg-color: #0f172a; --surface: #1e293b; --primary: #38bdf8; --text-main: #f1f5f9; --text-muted: #94a3b8; --border-color: rgba(56, 189, 248, 0.2); }
+[data-theme="forest"] { --bg-color: #0d1a16; --surface: #132721; --primary: #4ade80; --text-main: #ecfdf5; --text-muted: #6ee7b7; --border-color: rgba(74, 222, 128, 0.2); }
+[data-theme="amethyst"] { --bg-color: #2e1065; --surface: #4c1d95; --primary: #c084fc; --text-main: #f3e8ff; --text-muted: #d8b4fe; --border-color: rgba(192, 132, 252, 0.2); }
+[data-theme="rose"] { --bg-color: #27272a; --surface: #3f3f46; --primary: #fb7185; --text-main: #ffe4e6; --text-muted: #fda4af; --border-color: rgba(251, 113, 133, 0.2); }
+[data-theme="monochrome"] { --bg-color: #000000; --surface: #111111; --primary: #ffffff; --text-main: #ffffff; --text-muted: #888888; --border-color: #333333; }
+[data-theme="ocean"] { --bg-color: #083344; --surface: #164e63; --primary: #22d3ee; --text-main: #cffafe; --text-muted: #67e8f9; --border-color: rgba(34, 211, 238, 0.2); }
+[data-theme="sunset"] { --bg-color: #450a0a; --surface: #7f1d1d; --primary: #fb923c; --text-main: #ffedd5; --text-muted: #fdba74; --border-color: rgba(251, 146, 60, 0.2); }
+[data-theme="dracula"] { --bg-color: #282a36; --surface: #44475a; --primary: #ff79c6; --text-main: #f8f8f2; --text-muted: #6272a4; --border-color: rgba(255, 121, 198, 0.2); }
+[data-theme="nord"] { --bg-color: #2e3440; --surface: #3b4252; --primary: #88c0d0; --text-main: #eceff4; --text-muted: #d8dee9; --border-color: rgba(136, 192, 208, 0.2); }
+[data-theme="matcha"] { --bg-color: #2d372c; --surface: #3e4a3d; --primary: #a3b18a; --text-main: #dad7cd; --text-muted: #849669; --border-color: rgba(163, 177, 138, 0.2); }
+
+/* =========================================
+   NATIVE DESKTOP OVERRIDES
+   ========================================= */
+body, html {
+    margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    -webkit-user-select: none; user-select: none; cursor: default;
+}
+button, a, .sidebar-btn { outline: none !important; -webkit-tap-highlight-color: transparent; cursor: default !important; }
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(150, 150, 150, 0.3); border-radius: 8px; border: 2px solid var(--bg-color); }
+::-webkit-scrollbar-thumb:hover { background: rgba(150, 150, 150, 0.6); }
+
+/* =========================================
+   SIDEBAR & SKELETON
+   ========================================= */
+.titlebar-drag-region { position: absolute; top: 0; left: 0; right: 0; height: 32px; -webkit-app-region: drag; z-index: 9999; pointer-events: none; }
+.app-wrapper { display: flex; height: 100%; }
+
+.app-sidebar {
+    width: 72px; background: var(--surface); border-inline-end: 1px solid var(--border-color);
+    display: flex; flex-direction: column; align-items: center; padding: 24px 0; z-index: 50; flex: none;
+}
+.sidebar-logo { font-size: 2rem; color: var(--primary); margin-bottom: 40px; }
+.sidebar-btn {
+    background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem;
+    width: 48px; height: 48px; border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.2s; margin-bottom: 8px; text-decoration: none;
+}
+.sidebar-btn:hover { color: var(--primary); background: rgba(212, 175, 55, 0.1); }
+.sidebar-btn.active { color: var(--primary); background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border-color); }
+
+.main-content {
+    flex: 1; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; align-items: center;
+}
+
+/* =========================================
+   FAQ SPECIFIC UI
+   ========================================= */
+.faq-container { width: 100%; max-width: 800px; }
+.faq-header { text-align: center; margin-bottom: 3rem; }
+.faq-header h1 { font-size: 2.5rem; margin: 0 0 0.5rem 0; letter-spacing: -0.5px; color: var(--text-main); font-weight: 700; }
+.faq-header p { color: var(--text-muted); font-size: 1.05rem; margin: 0; font-weight: 500; }
+
+.faq-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+.faq-item.active {
+    border-color: var(--primary);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.faq-question {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer !important;
+    font-weight: 600;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+.faq-question:hover { background: rgba(255, 255, 255, 0.03); }
+.faq-question i { color: var(--primary); font-size: 1.2rem; transition: transform 0.3s ease; }
+.faq-item.active .faq-question i { transform: rotate(180deg); }
+
+.faq-answer {
+    padding: 0 1.5rem;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+.faq-item.active .faq-answer {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    max-height: 500px; /* Arbitrary large max-height for smooth opening */
+}
+.faq-answer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+.faq-answer a:hover { text-decoration: underline; }
+
+/* =========================================
+   MOBILE NATIVE APP LAYOUT
+   ========================================= */
+@media (max-width: 768px) {
+    html, body { height: auto !important; min-height: 100vh; overflow-y: auto !important; overflow-x: hidden !important; }
+    .app-wrapper { flex-direction: column; height: auto; min-height: 100vh; }
+
+    /* Convert Sidebar into a Mobile Top Nav */
+    .app-sidebar {
+        width: 100%; padding: 10px 15px; flex-direction: row; justify-content: space-between;
+        border-inline-end: none; border-bottom: 1px solid var(--border-color); box-sizing: border-box;
+        position: sticky; top: 0; z-index: 100; background: var(--surface);
+    }
+    .app-sidebar > div { flex-direction: row !important; gap: 15px; }
+    .sidebar-logo { display: none; }
+    .sidebar-btn { margin-bottom: 0; width: 44px; height: 44px; font-size: 1.4rem; }
+
+    /* Adjust Main Layout */
+    .main-content { padding: 20px 15px; overflow-y: visible; }
+    .faq-header h1 { font-size: 1.8rem; }
+    .faq-question { padding: 1.2rem; font-size: 1rem; }
+}
+    </style>
+</head>
+<body>
+    <!-- Instantly apply the saved theme before the page renders -->
+    <script>
+        const savedTheme = localStorage.getItem('ayah_theme') || 'coffee';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+
+    <div class="titlebar-drag-region"></div>
+
+    <div class="app-wrapper">
+        <!-- SIDEBAR / TOP NAV -->
+        <aside class="app-sidebar">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <i class="ph-fill ph-infinity sidebar-logo"></i>
+                
+                <!-- Navigate to Player -->
+                <a href="index.html" class="sidebar-btn" title="Home / Player">
+                    <i class="ph ph-house"></i>
+                </a>
+                
+                <!-- Navigate to Library -->
+                <a href="library.html" class="sidebar-btn" title="Library">
+                    <i class="ph ph-books"></i>
+                </a>
+
+                <!-- Active FAQ Tab -->
+                <button class="sidebar-btn active" title="FAQ & Help">
+                    <i class="ph-fill ph-question"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="faq-container">
+                
+                <div class="faq-header">
+                    <h1 data-translate="faqTitle">FAQ & Help</h1>
+                    <p data-translate="faqSub">Everything you need to know about Ayah Looper.</p>
+                </div>
+
+                <div class="faq-list">
+                    <!-- Q1 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q1">What is Ayah Looper?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a1">Ayah Looper is a free web application designed to help with Hifz (Quran memorization). It allows you to select specific reciters, slice audio tracks into individual Ayahs, and loop them continuously with custom pauses in between.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q2">How do I save my audio cuts?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a2">Your cuts are automatically saved to your browser's local memory. The next time you upload the same file or load the same Surah from the library, your cuts will still be there! For a permanent backup, you can click the <strong>Export Cuts</strong> button to download a `.json` file, which you can load later using the Import button.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q3">Can I use the app while studying or working?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a3">Yes! If you are on a desktop browser that supports it, click the <strong>Mini-Player</strong> icon (the square icon in the top right of the main app). This will pop out a small, frameless player that stays perfectly on top of all your other windows while you study.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q4">What does the "Loop Delay" do?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a4">When memorizing, it's helpful to listen to an Ayah, and then recite it yourself before the audio plays again. By setting the Loop Delay to 3 or 4 seconds, the app will pause silently between each loop, giving you time to repeat the verse out loud.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q5">Can I upload my own MP3s?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a5">Absolutely. While we provide a free library of famous reciters, you can upload any audio (`.mp3`) or video (`.mp4`) file from your device into the app, and the slicer/looper tools will work perfectly.</p>
+                        </div>
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            <span data-translate="q6">Who created Ayah Looper?</span>
+                            <i class="ph ph-caret-down"></i>
+                        </div>
+                        <div class="faq-answer">
+                            <p data-translate="a6">This project was created and designed by <strong>Duresa Haji</strong>. If you found it helpful, you can support the development by following the official Instagram account at <a href="https://instagram.com/ayahloopcom" target="_blank">@ayahloopcom</a>.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ACCORDION LOGIC -->
+    <script>
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                
+                // Close all other accordions first for a clean look
+                faqItems.forEach(otherItem => {
+                    otherItem.classList.remove('active');
+                });
+                
+                // If it wasn't already open, open it
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+    <!-- TRANSLATION ENGINE -->
+    <script>
+        const dictionary = {
+            en: {
+                faqTitle: "FAQ & Help",
+                faqSub: "Everything you need to know about Ayah Looper.",
+                q1: "What is Ayah Looper?",
+                a1: "Ayah Looper is a free web application designed to help with Hifz (Quran memorization). It allows you to select specific reciters, slice audio tracks into individual Ayahs, and loop them continuously with custom pauses in between.",
+                q2: "How do I save my audio cuts?",
+                a2: "Your cuts are automatically saved to your browser's local memory. The next time you upload the same file or load the same Surah from the library, your cuts will still be there! For a permanent backup, you can click the <strong>Export Cuts</strong> button to download a `.json` file, which you can load later using the Import button.",
+                q3: "Can I use the app while studying or working?",
+                a3: "Yes! If you are on a desktop browser that supports it, click the <strong>Mini-Player</strong> icon (the square icon in the top right of the main app). This will pop out a small, frameless player that stays perfectly on top of all your other windows while you study.",
+                q4: "What does the \"Loop Delay\" do?",
+                a4: "When memorizing, it's helpful to listen to an Ayah, and then recite it yourself before the audio plays again. By setting the Loop Delay to 3 or 4 seconds, the app will pause silently between each loop, giving you time to repeat the verse out loud.",
+                q5: "Can I upload my own MP3s?",
+                a5: "Absolutely. While we provide a free library of famous reciters, you can upload any audio (`.mp3`) or video (`.mp4`) file from your device into the app, and the slicer/looper tools will work perfectly.",
+                q6: "Who created Ayah Looper?",
+                a6: "This project was created and designed by <strong>Duresa Haji</strong>. If you found it helpful, you can support the development by following the official Instagram account at <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            ar: {
+                faqTitle: "الأسئلة الشائعة والمساعدة",
+                faqSub: "كل ما تحتاج معرفته عن Ayah Looper.",
+                q1: "ما هو Ayah Looper؟",
+                a1: "تطبيق Ayah Looper هو تطبيق ويب مجاني مصمم للمساعدة في الحفظ (حفظ القرآن). يتيح لك اختيار قراء محددين، وتقطيع المسارات الصوتية إلى آيات فردية، وتكرارها باستمرار مع فترات توقف مخصصة بينها.",
+                q2: "كيف يمكنني حفظ المقاطع الصوتية؟",
+                a2: "يتم حفظ مقاطعك تلقائيًا في الذاكرة المحلية لمتصفحك. في المرة القادمة التي تقوم فيها بتحميل نفس الملف أو السورة من المكتبة، ستجد مقاطعك كما هي! للحصول على نسخة احتياطية دائمة، يمكنك النقر على زر <strong>'تصدير المقاطع'</strong> لتنزيل ملف بصيغة `.json`، والذي يمكنك تحميله لاحقًا باستخدام زر 'استيراد'.",
+                q3: "هل يمكنني استخدام التطبيق أثناء الدراسة أو العمل؟",
+                a3: "نعم! إذا كنت تستخدم متصفح سطح مكتب يدعم ذلك، انقر على أيقونة <strong>المشغل المصغر</strong> (المربع في أعلى يمين التطبيق الأساسي). سيؤدي ذلك إلى ظهور مشغل صغير بدون إطار يظل فوق جميع النوافذ الأخرى أثناء دراستك.",
+                q4: "ما هي وظيفة \"تأخير التكرار\"؟",
+                a4: "عند الحفظ، من المفيد الاستماع إلى الآية، ثم تلاوتها بنفسك قبل تشغيل الصوت مرة أخرى. من خلال ضبط 'تأخير التكرار' على 3 أو 4 ثوانٍ، سيتوقف التطبيق بصمت بين كل تكرار، مما يمنحك وقتًا لتكرار الآية بصوت عالٍ.",
+                q5: "هل يمكنني تحميل ملفات MP3 الخاصة بي؟",
+                a5: "بالتأكيد. بينما نوفر مكتبة مجانية لأشهر القراء، يمكنك تحميل أي ملف صوتي (`.mp3`) أو فيديو (`.mp4`) من جهازك إلى التطبيق، وستعمل أدوات التقطيع/التكرار بشكل مثالي.",
+                q6: "من قام بإنشاء Ayah Looper؟",
+                a6: "تم إنشاء وتصميم هذا المشروع بواسطة <strong>Duresa Haji</strong>. إذا وجدته مفيدًا، يمكنك دعم التطوير من خلال متابعة الحساب الرسمي على إنستغرام <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            ur: {
+                faqTitle: "عمومی سوالات اور مدد",
+                faqSub: "آیت لوپر کے بارے میں سب کچھ جو آپ کو جاننے کی ضرورت ہے۔",
+                q1: "آیت لوپر کیا ہے؟",
+                a1: "آیت لوپر ایک مفت ویب ایپلیکیشن ہے جو حفظ (قرآن یاد کرنے) میں مدد کے لیے بنائی گئی ہے۔ یہ آپ کو مخصوص قاری منتخب کرنے، آڈیو ٹریکس کو انفرادی آیات میں کاٹنے، اور ان کے درمیان حسب ضرورت وقفوں کے ساتھ مسلسل لوپ کرنے کی سہولت دیتی ہے۔",
+                q2: "میں اپنے آڈیو کٹس کیسے محفوظ کروں؟",
+                a2: "آپ کے کٹس خود بخود آپ کے براؤزر کی مقامی میموری میں محفوظ ہوجاتے ہیں۔ اگلی بار جب آپ وہی فائل اپ لوڈ کریں گے یا لائبریری سے وہی سورہ لوڈ کریں گے، تو آپ کے کٹس وہیں ہوں گے! مستقل بیک اپ کے لیے، آپ <strong>Export Cuts</strong> بٹن پر کلک کر کے `.json` فائل ڈاؤن لوڈ کر سکتے ہیں، جسے آپ بعد میں Import بٹن استعمال کر کے لوڈ کر سکتے ہیں۔",
+                q3: "کیا میں پڑھائی یا کام کے دوران ایپ استعمال کر سکتا ہوں؟",
+                a3: "جی ہاں! اگر آپ ڈیسک ٹاپ براؤزر پر ہیں جو اسے سپورٹ کرتا ہے، تو <strong>Mini-Player</strong> آئیکن پر کلک کریں۔ یہ ایک چھوٹا، فریم لیس پلیئر نکال دے گا جو آپ کے پڑھنے کے دوران آپ کی تمام دوسری ونڈوز کے بالکل اوپر رہے گا۔",
+                q4: "\"Loop Delay\" کیا کرتا ہے؟",
+                a4: "حفظ کرتے وقت، کسی آیت کو سننا اور پھر آڈیو دوبارہ چلنے سے پہلے اسے خود پڑھنا مددگار ہوتا ہے۔ لوپ ڈیلے کو 3 یا 4 سیکنڈ پر سیٹ کر کے، ایپ ہر لوپ کے درمیان خاموشی سے رکے گی، جس سے آپ کو آیت کو بلند آواز میں دہرانے کا وقت ملے گا۔",
+                q5: "کیا میں اپنے MP3s اپ لوڈ کر سکتا ہوں؟",
+                a5: "بالکل۔ اگرچہ ہم مشہور قاریوں کی مفت لائبریری فراہم کرتے ہیں، آپ اپنے آلے سے کوئی بھی آڈیو (`.mp3`) یا ویڈیو (`.mp4`) فائل ایپ میں اپ لوڈ کر سکتے ہیں، اور سلائسر/لوپر ٹولز بالکل ٹھیک کام کریں گے۔",
+                q6: "آیت لوپر کس نے بنایا؟",
+                a6: "یہ پروجیکٹ <strong>Duresa Haji</strong> نے بنایا اور ڈیزائن کیا ہے۔ اگر آپ کو یہ مفید لگا، تو آپ آفیشل انسٹاگرام اکاؤنٹ <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a> کو فالو کر کے اس کی ترقی میں تعاون کر سکتے ہیں۔"
+            },
+            id: {
+                faqTitle: "Bantuan & FAQ",
+                faqSub: "Semua yang perlu Anda ketahui tentang Ayah Looper.",
+                q1: "Apa itu Ayah Looper?",
+                a1: "Ayah Looper adalah aplikasi web gratis yang dirancang untuk membantu Hifz (hafalan Quran). Aplikasi ini memungkinkan Anda memilih qari tertentu, memotong trek audio menjadi ayat-ayat individual, dan mengulangnya terus menerus dengan jeda khusus di antaranya.",
+                q2: "Bagaimana cara menyimpan potongan audio saya?",
+                a2: "Potongan Anda secara otomatis disimpan ke memori lokal browser Anda. Lain kali Anda mengunggah file yang sama atau memuat Surah yang sama dari perpustakaan, potongan Anda akan tetap ada! Untuk cadangan permanen, Anda dapat mengeklik tombol <strong>Export Cuts</strong> untuk mengunduh file `.json`, yang dapat Anda muat nanti menggunakan tombol Import.",
+                q3: "Bolehkah saya menggunakan aplikasi saat belajar atau bekerja?",
+                a3: "Ya! Jika Anda menggunakan browser desktop yang mendukungnya, klik ikon <strong>Mini-Player</strong>. Ini akan memunculkan pemutar kecil tanpa bingkai yang tetap berada di atas semua jendela Anda yang lain saat Anda belajar.",
+                q4: "Apa fungsi \"Loop Delay\"?",
+                a4: "Saat menghafal, akan sangat membantu jika mendengarkan sebuah Ayat, dan kemudian membacanya sendiri sebelum audio diputar lagi. Dengan mengatur Loop Delay ke 3 atau 4 detik, aplikasi akan berhenti diam-diam di antara setiap loop, memberi Anda waktu untuk mengulang ayat dengan suara keras.",
+                q5: "Bisakah saya mengunggah MP3 saya sendiri?",
+                a5: "Tentu saja. Meskipun kami menyediakan perpustakaan gratis qari terkenal, Anda dapat mengunggah file audio (`.mp3`) atau video (`.mp4`) dari perangkat Anda ke dalam aplikasi, dan alat pemotong/pengulang akan bekerja dengan sempurna.",
+                q6: "Siapa yang membuat Ayah Looper?",
+                a6: "Proyek ini dibuat dan dirancang oleh <strong>Duresa Haji</strong>. Jika Anda merasa ini bermanfaat, Anda dapat mendukung pengembangan dengan mengikuti akun Instagram resmi di <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            tr: {
+                faqTitle: "Yardım ve SSS",
+                faqSub: "Ayah Looper hakkında bilmeniz gereken her şey.",
+                q1: "Ayah Looper nedir?",
+                a1: "Ayah Looper, Hıfz (Kur'an ezberleme) konusunda yardımcı olmak için tasarlanmış ücretsiz bir web uygulamasıdır. Belirli hafızları seçmenize, ses parçalarını tek tek ayetlere ayırmanıza ve aralarında özel duraklamalarla sürekli olarak döngüye almanıza olanak tanır.",
+                q2: "Ses kesitlerimi nasıl kaydederim?",
+                a2: "Kesitleriniz otomatik olarak tarayıcınızın yerel belleğine kaydedilir. Aynı dosyayı yüklediğinizde veya kütüphaneden aynı Sureyi yüklediğinizde, kesitleriniz hala orada olacaktır! Kalıcı bir yedekleme için, daha sonra İçe Aktar düğmesini kullanarak yükleyebileceğiniz bir `.json` dosyasını indirmek üzere <strong>Dışa Aktar</strong> düğmesine tıklayabilirsiniz.",
+                q3: "Çalışırken veya okurken uygulamayı kullanabilir miyim?",
+                a3: "Evet! Destekleyen bir masaüstü tarayıcısındaysanız, <strong>Mini Oynatıcı</strong> simgesine tıklayın. Bu, siz çalışırken diğer tüm pencerelerinizin tam üstünde kalan küçük, çerçevesiz bir oynatıcı açacaktır.",
+                q4: "\"Döngü Gecikmesi\" ne işe yarar?",
+                a4: "Ezberlerken, bir Ayeti dinlemek ve ses tekrar çalmadan önce kendiniz okumak faydalıdır. Döngü Gecikmesini 3 veya 4 saniyeye ayarlayarak, uygulama her döngü arasında sessizce duraklayacak ve ayeti yüksek sesle tekrarlamanız için size zaman tanıyacaktır.",
+                q5: "Kendi MP3'lerimi yükleyebilir miyim?",
+                a5: "Kesinlikle. Ünlü hafızlardan oluşan ücretsiz bir kütüphane sunmamıza rağmen, cihazınızdan uygulamaya herhangi bir ses (`.mp3`) veya video (`.mp4`) dosyası yükleyebilirsiniz ve kesici/döngüleyici araçlar mükemmel şekilde çalışacaktır.",
+                q6: "Ayah Looper'ı kim yarattı?",
+                a6: "Bu proje <strong>Duresa Haji</strong> tarafından yaratılmış ve tasarlanmıştır. Faydalı bulduysanız, resmi Instagram hesabını <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a> adresinden takip ederek geliştirmeye destek olabilirsiniz."
+            },
+            fr: {
+                faqTitle: "Aide et FAQ",
+                faqSub: "Tout ce que vous devez savoir sur Ayah Looper.",
+                q1: "Qu'est-ce qu'Ayah Looper ?",
+                a1: "Ayah Looper est une application web gratuite conçue pour aider au Hifz (mémorisation du Coran). Elle vous permet de sélectionner des récitateurs spécifiques, de découper des pistes audio en versets individuels et de les lire en boucle en continu avec des pauses personnalisées entre eux.",
+                q2: "Comment sauvegarder mes découpages audio ?",
+                a2: "Vos découpages sont automatiquement enregistrés dans la mémoire locale de votre navigateur. La prochaine fois que vous téléchargez le même fichier ou chargez la même sourate depuis la bibliothèque, vos découpages seront toujours là ! Pour une sauvegarde permanente, vous pouvez cliquer sur le bouton <strong>Exporter</strong> pour télécharger un fichier `.json`, que vous pourrez charger plus tard en utilisant le bouton Importer.",
+                q3: "Puis-je utiliser l'application pendant que j'étudie ou que je travaille ?",
+                a3: "Oui ! Si vous êtes sur un navigateur de bureau qui le prend en charge, cliquez sur l'icône <strong>Mini-lecteur</strong>. Cela fera apparaître un petit lecteur sans bordure qui reste parfaitement au-dessus de toutes vos autres fenêtres pendant que vous étudiez.",
+                q4: "À quoi sert le \"Délai de boucle\" ?",
+                a4: "Lors de la mémorisation, il est utile d'écouter un verset, puis de le réciter soi-même avant que l'audio ne reprenne. En réglant le délai de boucle sur 3 ou 4 secondes, l'application fera une pause silencieuse entre chaque boucle, vous donnant le temps de répéter le verset à voix haute.",
+                q5: "Puis-je télécharger mes propres fichiers MP3 ?",
+                a5: "Absolument. Bien que nous fournissions une bibliothèque gratuite de récitateurs célèbres, vous pouvez télécharger n'importe quel fichier audio (`.mp3`) ou vidéo (`.mp4`) depuis votre appareil dans l'application, et les outils de découpage/boucle fonctionneront parfaitement.",
+                q6: "Qui a créé Ayah Looper ?",
+                a6: "Ce projet a été créé et conçu par <strong>Duresa Haji</strong>. Si vous l'avez trouvé utile, vous pouvez soutenir le développement en suivant le compte Instagram officiel à <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            es: {
+                faqTitle: "Ayuda y FAQ",
+                faqSub: "Todo lo que necesitas saber sobre Ayah Looper.",
+                q1: "¿Qué es Ayah Looper?",
+                a1: "Ayah Looper es una aplicación web gratuita diseñada para ayudar con el Hifz (memorización del Corán). Te permite seleccionar recitadores específicos, cortar pistas de audio en aleyas individuales y reproducirlas en bucle continuamente con pausas personalizadas entre ellas.",
+                q2: "¿Cómo guardo mis cortes de audio?",
+                a2: "Tus cortes se guardan automáticamente en la memoria local de tu navegador. La próxima vez que subas el mismo archivo o cargues la misma Sura desde la biblioteca, ¡tus cortes seguirán ahí! Para una copia de seguridad permanente, puedes hacer clic en el botón <strong>Exportar</strong> para descargar un archivo `.json`, que podrás cargar más tarde usando el botón Importar.",
+                q3: "¿Puedo usar la aplicación mientras estudio o trabajo?",
+                a3: "¡Sí! Si estás en un navegador de escritorio que lo admita, haz clic en el icono del <strong>Mini-Reproductor</strong>. Esto abrirá un pequeño reproductor sin bordes que se mantiene perfectamente encima de todas tus otras ventanas mientras estudias.",
+                q4: "¿Qué hace el \"Retraso de Bucle\"?",
+                a4: "Al memorizar, es útil escuchar una aleya y luego recitarla tú mismo antes de que el audio vuelva a reproducirse. Al establecer el Retraso de Bucle en 3 o 4 segundos, la aplicación hará una pausa en silencio entre cada bucle, dándote tiempo para repetir el verso en voz alta.",
+                q5: "¿Puedo subir mis propios MP3?",
+                a5: "Absolutamente. Aunque proporcionamos una biblioteca gratuita de recitadores famosos, puedes subir cualquier archivo de audio (`.mp3`) o video (`.mp4`) desde tu dispositivo a la aplicación, y las herramientas de corte/bucle funcionarán perfectamente.",
+                q6: "¿Quién creó Ayah Looper?",
+                a6: "Este proyecto fue creado y diseñado por <strong>Duresa Haji</strong>. Si te resultó útil, puedes apoyar el desarrollo siguiendo la cuenta oficial de Instagram en <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            ru: {
+                faqTitle: "Помощь и FAQ",
+                faqSub: "Всё, что вам нужно знать об Ayah Looper.",
+                q1: "Что такое Ayah Looper?",
+                a1: "Ayah Looper — это бесплатное веб-приложение, созданное для помощи в Хифзе (заучивании Корана). Оно позволяет вам выбирать определенных чтецов, нарезать аудиодорожки на отдельные аяты и непрерывно зацикливать их с настраиваемыми паузами между ними.",
+                q2: "Как сохранить мои аудиофрагменты?",
+                a2: "Ваши фрагменты автоматически сохраняются в локальной памяти вашего браузера. В следующий раз, когда вы загрузите тот же файл или откроете ту же Суру из библиотеки, ваши фрагменты всё еще будут там! Для постоянного резервного копирования вы можете нажать кнопку <strong>Экспорт</strong>, чтобы скачать файл `.json`, который вы сможете загрузить позже с помощью кнопки Импорт.",
+                q3: "Могу ли я использовать приложение во время учебы или работы?",
+                a3: "Да! Если вы используете браузер на ПК, поддерживающий эту функцию, нажмите на значок <strong>Мини-плеера</strong>. Появится небольшой плеер без рамок, который будет оставаться поверх всех других ваших окон, пока вы учитесь.",
+                q4: "Для чего нужна \"Задержка цикла\"?",
+                a4: "При заучивании полезно прослушать аят, а затем прочитать его самостоятельно, прежде чем аудио снова воспроизведется. Установив задержку цикла на 3 или 4 секунды, приложение будет делать тихую паузу между каждым циклом, давая вам время повторить аят вслух.",
+                q5: "Могу ли я загружать свои собственные MP3?",
+                a5: "Абсолютно. Хотя мы предоставляем бесплатную библиотеку известных чтецов, вы можете загрузить любой аудио (`.mp3`) или видео (`.mp4`) файл со своего устройства в приложение, и инструменты нарезки/зацикливания будут работать идеально.",
+                q6: "Кто создал Ayah Looper?",
+                a6: "Этот проект был создан и разработан <strong>Duresa Haji</strong>. Если вы сочли его полезным, вы можете поддержать разработку, подписавшись на официальный аккаунт в Instagram <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>."
+            },
+            bn: {
+                faqTitle: "সাহায্য এবং FAQ",
+                faqSub: "Ayah Looper সম্পর্কে আপনার যা জানা দরকার।",
+                q1: "Ayah Looper কি?",
+                a1: "Ayah Looper হল একটি বিনামূল্যের ওয়েব অ্যাপ্লিকেশন যা হিফজ (কুরআন মুখস্থ) করতে সাহায্য করার জন্য ডিজাইন করা হয়েছে। এটি আপনাকে নির্দিষ্ট আবৃত্তিকারদের নির্বাচন করতে, অডিও ট্র্যাকগুলিকে পৃথক আয়াতে কাটার এবং তাদের মধ্যে কাস্টম বিরতি সহ অবিচ্ছিন্নভাবে লুপ করার অনুমতি দেয়।",
+                q2: "আমি কিভাবে আমার অডিও কাট সংরক্ষণ করব?",
+                a2: "আপনার কাটগুলি স্বয়ংক্রিয়ভাবে আপনার ব্রাউজারের স্থানীয় মেমরিতে সংরক্ষিত হয়। পরের বার যখন আপনি একই ফাইল আপলোড করবেন বা লাইব্রেরি থেকে একই সূরা লোড করবেন, তখন আপনার কাটগুলি সেখানেই থাকবে! স্থায়ী ব্যাকআপের জন্য, আপনি <strong>Export Cuts</strong> বোতামে ক্লিক করে একটি `.json` ফাইল ডাউনলোড করতে পারেন, যা আপনি পরে Import বোতাম ব্যবহার করে লোড করতে পারেন।",
+                q3: "পড়াশোনা বা কাজ করার সময় আমি কি অ্যাপটি ব্যবহার করতে পারি?",
+                a3: "হ্যাঁ! আপনি যদি এটি সমর্থন করে এমন একটি ডেস্কটপ ব্রাউজারে থাকেন তবে <strong>Mini-Player</strong> আইকনে ক্লিক করুন। এটি একটি ছোট, ফ্রেমলেস প্লেয়ার পপ আউট করবে যা আপনার অধ্যয়নের সময় আপনার অন্য সমস্ত উইন্ডোর উপরে পুরোপুরি থাকে।",
+                q4: "\"Loop Delay\" কি কাজ করে?",
+                a4: "মুখস্থ করার সময়, একটি আয়াত শোনা এবং তারপর অডিওটি আবার বাজানোর আগে নিজে তিলাওয়াত করা সহায়ক। লুপ বিলম্ব 3 বা 4 সেকেন্ডে সেট করে, অ্যাপটি প্রতিটি লুপের মধ্যে নীরবে বিরতি দেবে, যা আপনাকে আয়াতটি উচ্চস্বরে পুনরাবৃত্তি করার সময় দেবে।",
+                q5: "আমি কি আমার নিজের MP3 আপলোড করতে পারি?",
+                a5: "অবশ্যই। যদিও আমরা বিখ্যাত আবৃত্তিকারদের একটি বিনামূল্যের লাইব্রেরি প্রদান করি, আপনি আপনার ডিভাইস থেকে যেকোনো অডিও (`.mp3`) বা ভিডিও (`.mp4`) ফাইল অ্যাপে আপলোড করতে পারেন, এবং স্লাইসার/লুপার টুলগুলো নিখুঁতভাবে কাজ করবে।",
+                q6: "Ayah Looper কে তৈরি করেছেন?",
+                a6: "এই প্রজেক্টটি তৈরি এবং ডিজাইন করেছেন <strong>Duresa Haji</strong>। যদি আপনি এটি সহায়ক বলে মনে করেন, আপনি <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a>-এ অফিসিয়াল ইনস্টাগ্রাম অ্যাকাউন্ট অনুসরণ করে এর উন্নয়নে সহায়তা করতে পারেন।"
+            },
+            hi: {
+                faqTitle: "सहायता और सामान्य प्रश्न",
+                faqSub: "Ayah Looper के बारे में वह सब कुछ जो आपको जानना आवश्यक है।",
+                q1: "Ayah Looper क्या है?",
+                a1: "Ayah Looper एक मुफ़्त वेब एप्लिकेशन है जिसे हिफ़्ज़ (कुरान याद करने) में मदद करने के लिए डिज़ाइन किया गया है। यह आपको विशिष्ट पाठकों को चुनने, ऑडियो ट्रैक को व्यक्तिगत आयतों में काटने, और उनके बीच कस्टम विराम के साथ उन्हें लगातार लूप करने की अनुमति देता है।",
+                q2: "मैं अपने ऑडियो कट्स को कैसे सेव करूँ?",
+                a2: "आपके कट स्वचालित रूप से आपके ब्राउज़र की स्थानीय मेमोरी में सहेजे जाते हैं। अगली बार जब आप वही फ़ाइल अपलोड करेंगे या लाइब्रेरी से वही सूरह लोड करेंगे, तो आपके कट वहीं होंगे! स्थायी बैकअप के लिए, आप <strong>Export Cuts</strong> बटन पर क्लिक करके `.json` फ़ाइल डाउनलोड कर सकते हैं, जिसे आप बाद में Import बटन का उपयोग करके लोड कर सकते हैं।",
+                q3: "क्या मैं पढ़ाई या काम करते समय ऐप का उपयोग कर सकता हूँ?",
+                a3: "हाँ! यदि आप किसी ऐसे डेस्कटॉप ब्राउज़र पर हैं जो इसका समर्थन करता है, तो <strong>Mini-Player</strong> आइकन पर क्लिक करें। यह एक छोटा, बॉर्डरलेस प्लेयर पॉप आउट करेगा जो आपके अध्ययन करते समय आपकी अन्य सभी विंडो के बिल्कुल ऊपर रहता है।",
+                q4: "\"Loop Delay\" क्या करता है?",
+                a4: "याद करते समय, एक आयत सुनना, और फिर ऑडियो के फिर से बजने से पहले उसे स्वयं पढ़ना मददगार होता है। लूप देरी को 3 या 4 सेकंड पर सेट करके, ऐप प्रत्येक लूप के बीच चुपचाप रुकेगा, जिससे आपको कविता को जोर से दोहराने का समय मिलेगा।",
+                q5: "क्या मैं अपने स्वयं के MP3 अपलोड कर सकता हूँ?",
+                a5: "बिल्कुल। हालांकि हम प्रसिद्ध पाठकों की एक मुफ़्त लाइब्रेरी प्रदान करते हैं, आप अपने डिवाइस से कोई भी ऑडियो (`.mp3`) या वीडियो (`.mp4`) फ़ाइल ऐप में अपलोड कर सकते हैं, और स्लाइसर/लूपर टूल पूरी तरह से काम करेंगे।",
+                q6: "Ayah Looper किसने बनाया?",
+                a6: "यह प्रोजेक्ट <strong>Duresa Haji</strong> द्वारा बनाया और डिज़ाइन किया गया है। यदि आपको यह उपयोगी लगा, तो आप <a href=\"https://instagram.com/ayahloopcom\" target=\"_blank\">@ayahloopcom</a> पर आधिकारिक Instagram खाते का अनुसरण करके इसके विकास का समर्थन कर सकते हैं।"
+            }
+        };
+
+        function applyFaqLanguage() {
+            // Grab the saved language from the main app, default to English
+            const langCode = localStorage.getItem('ayah_lang') || 'en';
+            const translation = dictionary[langCode] || dictionary['en'];
+
+            // Switch to Right-to-Left (RTL) for Arabic and Urdu
+            if (langCode === 'ar' || langCode === 'ur') {
+                document.body.setAttribute('dir', 'rtl');
+            } else {
+                document.body.setAttribute('dir', 'ltr');
+            }
+
+            // Find everything with a data-translate tag and swap the text safely
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (translation[key]) {
+                    el.innerHTML = translation[key];
+                }
+            });
+        }
+
+        // Run instantly on page load
+        applyFaqLanguage();
+    </script>
+</body>
+</html>
